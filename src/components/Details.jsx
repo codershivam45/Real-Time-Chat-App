@@ -1,15 +1,25 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react'
+import useUserStore from '../lib/useStore'
+import chatStore from '../lib/chatStore';
+// import { toast } from 'react-toastify';
 
 const details = () => {
+  const {logout} =useUserStore();
+  const {receiverUser}=chatStore();
+
+  const handleLogout=()=>{
+    logout();
+    // toast.success('Logged out successfully')
+  }
   return (
     <div className='text-white' >
       <div className="user flex flex-col items-center m-4 gap-2 py-2 border border-transparent border-b-[#b9b7b71d] sticky top-0 backdrop-blur-3xl ">
         <div className='w-[120px] h-[120px]  rounded-[50%] overflow-clip'>
-          <img src="./avatar.png" alt="" className='w-[120px] h-[120px] brightness-200' />
+          <img src={receiverUser?.avatar||"./avatar.png"} alt="" className='w-[120px] h-[120px] ' />
         </div>
         <div className="text ">
-          <div className="name text-xl text-center">Ava Thomas</div>
+          <div className="name text-xl text-center">{receiverUser?.username}</div>
           <div className="desc text-md text-gray-500 text-center">Available</div>
         </div>
       </div>
@@ -131,7 +141,7 @@ const details = () => {
           <button className='bg-red-400 p-2 rounded-lg hover:bg-red-600 w-full'>Block User</button>
         </div>
         <div className="Logout px-4 flex justify-center w-full">
-          <button className='bg-blue-400 p-2 rounded-lg hover:bg-blue-600 w-full'>Logout User</button>
+          <button className='bg-blue-400 p-2 rounded-lg hover:bg-blue-600 w-full' onClick={handleLogout}>Logout User</button>
         </div>
       </div>
     </div>

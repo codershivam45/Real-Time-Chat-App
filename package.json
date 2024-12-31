@@ -10,13 +10,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "appwrite": "^16.1.0",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.4.7",
     "emoji-picker-react": "^4.12.0",
-    "firebase": "^11.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-toastify": "^10.0.6",
     "tailwind-aspect-ratio": "^1.0.2",
-    "tailwind-scrollbar": "^3.1.0"
+    "tailwind-scrollbar": "^3.1.0",
+    "uuid": "^11.0.3",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
