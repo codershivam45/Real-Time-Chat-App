@@ -32,13 +32,7 @@ const AddUser = () => {
     setusername(e.target.value)
   }
   const handleAdd =async (user)=>{
-    // console.log(user.id)
-    // console.log(currentUser.id)
-    // console.log(db)
-    // const messageID=uuidv4()
-
     
-
     try {
       const res=await chat.createDocument(
         import.meta.env.VITE_DB_ID,
@@ -55,13 +49,19 @@ const AddUser = () => {
         lastMessage: "",
         messageID,
         userId: user.id,
+        lastUpdated: Date.now(),
+        isReceiverBlocked: false,
+        isSenderBlocked: false
       }
       const payLoadUser = {
         createdAt: Date.now(),
         lastMessage: "",
         messageID,
         userId: currentUser.id,
-        isSeen:true
+        isSeen:true,
+        lastUpdated:Date.now(),
+        isReceiverBlocked: false,
+        isSenderBlocked: false
       }
       const  chatU = await db["ChatUser"].get(user.id);
       let chatListU =[];
@@ -94,9 +94,7 @@ const AddUser = () => {
       // fetchUserInfo()
 
       fetchChatList(currentUser.id);
-      // const  chatI = 
-      // console.log("Updated ")
-      // console.log("Chat User:", chatU.chats);console.log('handleSearch function called');
+      
       
 
     } catch (error) {

@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import { account,chat,storage } from '../lib/appwrite';
 import useUserStore from '../lib/useStore';
 const login = () => {
-  const [isLogin, setisLogin] = useState(true)
+  const [isLogin, setisLogin] = useState(false)
   const [isLoad,setisLoad]=useState(false);
   // const [isLoading,setisLoading]=useState(false);
   const { isLoading, currentUser, fetchUserInfo }=useUserStore();
@@ -116,8 +116,8 @@ const login = () => {
           <div className="logo"><span>&lt;</span><span>Chat</span><span>/&gt;</span></div>
           <div className="links ">
             <ul className='flex gap-5' >
-              <li className='cursor-pointer'>Login</li>
-              <li className='cursor-pointer'>Signup</li>
+              <li className='cursor-pointer' onClick={()=>{setisLogin(true)}}>Login</li>
+              <li className='cursor-pointer' onClick={()=>{setisLogin(false)}}>Signup</li>
               <li className='cursor-pointer'>About Us</li>
               <li className='cursor-pointer'>Contact</li>
               <li className='cursor-pointer'>Help</li>
@@ -129,22 +129,7 @@ const login = () => {
             
             {
               isLogin ? <>
-              <div >Login for continue chatting with friends/family</div>
-              <form action="" className=' flex flex-col gap-4 my-2' onSubmit={handleLogin}>
-                <div className="username w-[100%] flex bg-white p-2">
-                   <img src="./user.svg" className=' w-4' alt="" />
-                    <input type="email" placeholder="Enter email" name="email" className='text-black w-[100%] outline-none' />
-                </div>
-                  <div className="password username w-[100%] flex bg-white p-2">
-                  <img src="./lock.svg" className=' w-4' alt="" />
-                    <input type="password" placeholder="Enter Password" name="password" className='text-black w-[100%] outline-none' />
-                </div>
-                  <button className='bg-blue-500 p-2 disabled:bg-blue-300 disabled:cursor-not-allowed' disabled={isLoading}>{isLoading? "Loading.." : 'Login'}</button>
-              </form>
-              <div className='text-center'>Don&apos;t have an account <span onClick={toggleLogin}>Signup</span> </div></>
-               :
-                <>
-                  <div >Signup for continue chatting with friends/family</div>
+              <div >Signup for continue chatting with friends/family</div>
                   <form action="" className=' flex flex-col gap-4 my-2' onSubmit={handleSignup}>
                     <div className="username w-[100%] flex bg-white p-2">
                       <img src="./user.svg" className=' w-4' alt="" />
@@ -167,6 +152,23 @@ const login = () => {
                     <button className='bg-blue-500 p-2 disabled:bg-blue-300 disabled:cursor-not-allowed' disabled={isLoad}>{isLoad ? "Signing Up.." : 'Signup'}</button>
                   </form>
                   <div className='text-center'>Have an account <span onClick={toggleLogin}>Login</span> </div></>
+
+               :
+                <>
+                  <div >Login for continue chatting with friends/family</div>
+                  <form action="" className=' flex flex-col gap-4 my-2' onSubmit={handleLogin}>
+                    <div className="username w-[100%] flex bg-white p-2">
+                      <img src="./user.svg" className=' w-4' alt="" />
+                      <input type="email" placeholder="Enter email" name="email" className='text-black w-[100%] outline-none' />
+                    </div>
+                    <div className="password username w-[100%] flex bg-white p-2">
+                      <img src="./lock.svg" className=' w-4' alt="" />
+                      <input type="password" placeholder="Enter Password" name="password" className='text-black w-[100%] outline-none' />
+                    </div>
+                    <button className='bg-blue-500 p-2 disabled:bg-blue-300 disabled:cursor-not-allowed' disabled={isLoading}>{isLoading ? "Loading.." : 'Login'}</button>
+                  </form>
+                  <div className='text-center'>Don&apos;t have an account <span onClick={toggleLogin}>Signup</span> </div></>
+                  
 
             }
           </div>

@@ -18,8 +18,8 @@ const chat = () => {
 
   const scrollRef = useRef(null)
   const observerRef = useRef(null)
-  const { currentUser, chatList,fetchChatList } = useUserStore()
-  const { receiverUser, messageID, message, fetchMessage ,toggleDetails } = chatStore();
+  const { currentUser, chatList, fetchChatList } = useUserStore()
+  const { receiverUser, messageID, message, fetchMessage, toggleDetails } = chatStore();
 
 
 
@@ -28,9 +28,9 @@ const chat = () => {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   };
-  useEffect(()=>{
+  useEffect(() => {
     scrollToBottom()
-  },[])
+  }, [])
 
   // Set up MutationObserver for dynamic content changes
   useEffect(() => {
@@ -92,7 +92,7 @@ const chat = () => {
 
   }
   const handleTime = (pastTimestamp) => {
-    if(pastTimestamp=="1 sec ago"){
+    if (pastTimestamp == "1 sec ago") {
 
       return "1 sec ago"
     }
@@ -123,7 +123,7 @@ const chat = () => {
   }
   const handleSend = async () => {
     // console.log(img)
-    
+
     try {
       // console.log(msg);
       const msgobj = {
@@ -142,7 +142,7 @@ const chat = () => {
       )
       fetchMessage(messageID)
       // console.log("Message sended")
-      
+
 
       const ids = [
         {
@@ -159,21 +159,25 @@ const chat = () => {
       ids.forEach(async (item) => {
         const chatUser = await db["ChatUser"].get(item.senderId)
 
-        const chatList=chatUser.chats.map((it)=>{
-          let element=JSON.parse(it)
-          // console.log("element",element)
-          // console.log("receiverID",item.receiverId)
-          if(!("isSeen" in element)){
-            element={...element,isSeen:true}
-          }
-          if(element.userId==item.receiverId){
-            element.lastMessage=msg;
-            if(currentUser.id==item.receiverId){
-              element.isSeen=false;
-            }
-           
-            // console.log(element,"id")
+        const chatList = chatUser.chats.map((it) => {
+          let element = JSON.parse(it)
 
+          if (element.userId == item.receiverId) {
+            
+            element.lastMessage = msg;
+            if(img){
+              element.lastMessage = "📷 "+msg;
+            }
+            if(!msg && img){
+              element.lastMessage = " 📷 You shared an image "
+            }
+            element.lastUpdated = Date.now()
+            if (currentUser.id == item.receiverId) {
+              element.isSeen = false;
+              if (!msg && img) {
+                element.lastMessage = " 📷 You were shared  an image "
+              }
+            }
           }
           return JSON.stringify(element);
 
@@ -197,13 +201,13 @@ const chat = () => {
     <div className='flex flex-col justify-between h-[100vh]'>
 
       <div className='user flex p-4 justify-between items-center text-white bg-[#110f0f49] sticky top-0  opacity-100 backdrop-blur-3xl'>
-        <div className='flex  items-center gap-3 lg:ml-0 ml-[25px] ' onClick={()=>{toggleDetails(true)}}>
+        <div className='flex  items-center gap-3 lg:ml-0 ml-[25px] ' onClick={() => { toggleDetails(true) }}>
           <div className="dp  ">
-            <img src={receiverUser?.avatar || "./avatar.png"} alt="" className='rounded-[50%]  w-[48px] h-[48px]' />
+            <img src={receiverUser.avatar && !receiverUser.isSenderBlocked ? receiverUser.avatar : "./avatar.png"} alt="" className='rounded-[50%]  w-[48px] h-[48px]' />
           </div>
           <div className=' text-lg cursor-pointer '>
-            <div className="name">{receiverUser?.username || "Ava Thomas"}</div>
-            <div className="desc text-sm text-gray-500">Available</div>
+            <div className="name">{receiverUser?.username && !receiverUser.isSenderBlocked ? receiverUser.username : "User"}</div>
+            {!receiverUser.isSenderBlocked && <div className="desc text-sm text-gray-500">Available</div>}
           </div>
 
         </div>
@@ -214,17 +218,17 @@ const chat = () => {
         </div>
 
       </div>
-      <div className="chats flex flex-col gap-2 h-[80vh] overflow-y-auto no-scrollbar" ref={scrollRef}>
+      <div className="chats flex flex-col gap-2 h-[80vh] overflow-y-auto no-scrollbar bg-[url('/chatbg.jpeg')] " ref={scrollRef}>
         {
           message.map((item, index) => (
             <div className={item.senderId == currentUser.id ? "flex flex-col items-end" : 'flex flex-col items-start'} key={index}>
               <div className="chat text-white p-2 flex gap-2 max-w-[80%]">
                 {item.senderId != currentUser.id && <div>
                   <div className="w-[28px] h-[28px] rounded-[50%] overflow-clip">
-                    <img src={receiverUser.avatar || "./avatar.png"} alt="Avatar" className="w-[28px] h-[28px] " />
+                    <img src={receiverUser.avatar && !receiverUser.isSenderBlocked ? receiverUser.avatar : "./avatar.png"} alt="Avatar" className="w-[28px] h-[28px] " />
                   </div>
                 </div>}
-                <div className="text flex flex-col gap-1">
+                <div className={item.senderId == currentUser.id ? "text flex flex-col gap-1 items-end mr-2" : "text flex flex-col gap-1 items-start" }>
                   {item.photo && <div className="img">
                     <img
                       src={item.photo}
@@ -232,52 +236,65 @@ const chat = () => {
                       className="rounded-md"
                     />
                   </div>}
-                  <div className={item.senderId == currentUser.id ? "msg  bg-blue-500 p-2 rounded-md max-w-fit" : "msg bg-[rgba(17,25,40,0.3)] p-2 rounded-md max-w-fit"}>
+                  {item.msg && <div className={item.senderId == currentUser.id ? "msg  bg-blue-500 p-2 rounded-md max-w-fit " : "msg bg-[rgba(166,169,174,0.78)] p-2 rounded-md max-w-fit"}>
                     {item.msg}
-                  </div>
+                  </div>}
                   <div className="time text-sm">{handleTime(item.timeElapsed)}</div>
                 </div>
               </div>
             </div>
           ))
         }
+        {receiverUser.isReceiverBlocked && <div className='text-white text-center w-fit mx-auto bg-[#ffffff1a] rounded-sm m-1 p-1 text-sm '>You blocked the User </div>}
 
       </div>
 
-      <div className="send p-4 flex items-center justify-between relative ">
-
-        <div className="flex bg-[#4A4A58] border border-transparent hover:border-white items-center py-4 px-2 rounded w-[100%] justify-between">
-          <div className="icons flex gap-2 ">
-            <img src="./emoji.png" alt="" width="24" className='cursor-pointer' onClick={() => { setopen((prev) => { return !prev }) }} />
+      <div className="send  md:p-4 flex items-center justify-between relative">
+        <div className="flex bg-[#4A4A58] border border-transparent hover:border-white items-center py-2 sm:py-4 px-2 rounded w-full justify-between">
+          
+          <div className="icons flex gap-2 flex-shrink-0">
+            <img src="./emoji.png" alt="" className='sm:w-[24px] w-[16px] cursor-pointer' onClick={() => { setopen((prev) => !prev); }} />
             {open && (
               <div
-                className="fixed bottom-24 left-40  p-4 rounded shadow-lg z-50"
+                className="fixed bottom-24 left-40 p-4 rounded shadow-lg z-50"
                 style={{ width: "300px" }} // Adjust width as needed
               >
                 <EmojiPicker onEmojiClick={setEmoji} />
               </div>
             )}
-            <img src="./camera.png" alt="" width="24" />
-            <label htmlFor="imgupload" className="w-[28px]">
-              <img src="./img.png" alt=""  />
-            </label>
-            <input type="file" name="" id="imgupload" className='hidden' accept="image/*" onChange={handleImage} />
+            <img src="./camera.png" alt="" className='sm:w-[24px] w-[16px]' />
+            <div className=" w-[16px] h-[16px] sm:w-[24px] sm:h-[24px] flex-shrink-0">
+              <label htmlFor="imgupload">
+                <img src="./img.png" alt="" className=" w-[16px] sm:w-[24px] h-auto" />
+              </label>
+            </div>
+            <input type="file" name="" id="imgupload" className="hidden" accept="image/*" onChange={handleImage} />
           </div>
+
+          
           <input
             type="text"
-            className="bg-[#4A4A58] text-white focus:outline-none ml-2 w-[80%]"
-            placeholder="Type a Message..."
+            className="bg-[#4A4A58] text-white focus:outline-none ml-2 flex-grow"
+            placeholder={receiverUser.isSenderBlocked || receiverUser.isReceiverBlocked ? "Can't send a message" : "Message"}
             value={msg}
             onChange={handleChange}
           />
-          <div className=' flex  gap-2'>
-            <button><img src="./mic.png" alt="" width="24" /></button>
-            <button onClick={handleSend} disabled={!img && !msg} className='disabled:cursor-not-allowed'><img src="./send.png" alt="" width="24"  /></button>
 
+          <div className="flex gap-2 flex-shrink-0">
+            <button>
+              <img src="./mic.png" alt="" className='sm:w-[24px] w-[16px]' />
+            </button>
+            <button
+              onClick={handleSend}
+              disabled={(!img && !msg) || receiverUser.isSenderBlocked || receiverUser.isReceiverBlocked}
+              className="disabled:cursor-not-allowed"
+            >
+              <img src="./send.png" alt="" className='sm:w-[24px] w-[16px]' />
+            </button>
           </div>
         </div>
-
       </div>
+
 
 
     </div>

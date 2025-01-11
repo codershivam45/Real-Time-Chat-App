@@ -9,17 +9,18 @@ const chatStore = create((set) => ({
     messageID:null,
     message:[],
     showDetails:false,
+    hasBlockedReceiver:false,
     
 
     // Actions
-    fetchReceiverUserInfo: async (id,chatList) => {
+    fetchReceiverUserInfo: async (id, chatList, isReceiverBlocked ,isSenderBlocked) => {
         try {
             const userInfo = await chat.getDocument(
                 import.meta.env.VITE_DB_ID,
                 import.meta.env.VITE_USERS_ID,
                 id
             )         
-            set({ receiverUser: userInfo, }); // Update store with user data
+            set({ receiverUser: { ...userInfo, isReceiverBlocked ,isSenderBlocked } }); // Update store with user data
  
             try {
                 var messageid = "";
@@ -54,7 +55,48 @@ const chatStore = create((set) => ({
     },
     toggleDetails: (val)=>{
         set({ showDetails: val });
-    } 
+    },
+    toggleBlock : (receiverUser,userid,receiverid)=>{
+        console.log("Clicked")
+        try{
+            const ids = [
+                {
+                    senderId: userid,
+                    receiverId: receiverid,
+                },
+                {
+                    senderId: receiverid,
+                    receiverId: userid,
+                }
+            ];
+            ids.forEach(async (item) => {
+                const chatUser = await db["ChatUser"].get(item.senderId)
+
+                const chatList = chatUser.chats.map((it) => {
+                    let element = JSON.parse(it)
+                    if (element.userId == item.receiverId) {
+                        if(item.senderId==userid){
+                            element.isReceiverBlocked=!element.isReceiverBlocked;
+                        }
+                        if(item.senderId==receiverid){
+                            element.isSenderBlocked=!(element.isSenderBlocked);
+                        }
+                    }
+                    return JSON.stringify(element);
+                })
+                console.log(chatList)
+                await db["ChatUser"].update(item.senderId, { chats: chatList })
+            })
+            receiverUser.isReceiverBlocked = !receiverUser.isReceiverBlocked;
+            set({ receiverUser: receiverUser })
+        }catch{
+            console.log("Error")
+            
+        }
+        
+         
+        
+    }
 }));
 
 export default chatStore;
