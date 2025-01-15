@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import './App.css'
 import './index.css'
 import Chat from './components/Chat'
-import Details from './components/details'
+import Details from './components/details'; 
 import List from './components/List'
 import Login from './components/Login'
 import useUserStore from './lib/useStore'
@@ -21,7 +21,7 @@ function App() {
   return (
     <>
       {isLoading ?
-        <div>Loading...</div> :
+        <div>Loading... </div> :
 
         currentUser ?
           <>

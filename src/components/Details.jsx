@@ -24,7 +24,7 @@ const details = () => {
       <div className="other flex flex-col pb-2">
         <div className="chatSettings px-4 py-2">
           <div className="head flex justify-between">
-            <div className="heading">Chat Settings</div>
+            <div className="heading">Chat Settings  </div>
             <div className="icon bg-[#4A4A58] flex justify-center p-2 rounded-full items-center cursor-pointer"><img src="./arrowDown.png" alt="" width="12" /></div>
           </div>
           <div className="content"></div>
