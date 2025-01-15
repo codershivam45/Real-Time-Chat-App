@@ -17,6 +17,8 @@ const chatStore = create((set) => ({
                 import.meta.env.VITE_CHATUSER_ID, 
                 id
             )
+            console.log("Hi")
+            console.log(userInfo)
             set({ receiverUser: userInfo, }); // Update store with user data
         } catch (err) {
             console.error("Failed to fetch user info:", err);

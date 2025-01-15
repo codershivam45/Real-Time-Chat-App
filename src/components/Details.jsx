@@ -42,41 +42,14 @@ const details = () => {
             <div className="icon bg-[#4A4A58] flex justify-center p-2 rounded-full items-center cursor-pointer"><img src="./arrowDown.png" alt="" width="12" /></div>
           </div>
           <div className="content py-3 flex flex-col gap-2">
-            <div className="photo flex justify-between items-center">
+            
+            {/* <div className="photo flex justify-between items-center">
               <div className="img flex items-center gap-2  ">
                 <div><img src="https://th.bing.com/th/id/OIP.GvntOdvz80txbfbW4rz2kAHaEo?w=1920&h=1200&rs=1&pid=ImgDetMain" alt="" width="32" /></div>
                 <div className="name text-sm text-gray-300">photo_10.12.2024</div>
               </div>
               <div className="icon"><img src="./download.png" alt="" width="16" /></div>
-            </div>
-            <div className="photo flex justify-between items-center">
-              <div className="img flex items-center gap-2  ">
-                <div><img src="https://th.bing.com/th/id/OIP.GvntOdvz80txbfbW4rz2kAHaEo?w=1920&h=1200&rs=1&pid=ImgDetMain" alt="" width="32" /></div>
-                <div className="name text-sm text-gray-300">photo_10.12.2024</div>
-              </div>
-              <div className="icon"><img src="./download.png" alt="" width="16" /></div>
-            </div>
-            <div className="photo flex justify-between items-center">
-              <div className="img flex items-center gap-2  ">
-                <div><img src="https://th.bing.com/th/id/OIP.GvntOdvz80txbfbW4rz2kAHaEo?w=1920&h=1200&rs=1&pid=ImgDetMain" alt="" width="32" /></div>
-                <div className="name text-sm text-gray-300">photo_10.12.2024</div>
-              </div>
-              <div className="icon"><img src="./download.png" alt="" width="16" /></div>
-            </div>
-            <div className="photo flex justify-between items-center">
-              <div className="img flex items-center gap-2  ">
-                <div><img src="https://th.bing.com/th/id/OIP.GvntOdvz80txbfbW4rz2kAHaEo?w=1920&h=1200&rs=1&pid=ImgDetMain" alt="" width="32" /></div>
-                <div className="name text-sm text-gray-300">photo_10.12.2024</div>
-              </div>
-              <div className="icon"><img src="./download.png" alt="" width="16" /></div>
-            </div>
-            <div className="photo flex justify-between items-center">
-              <div className="img flex items-center gap-2  ">
-                <div><img src="https://th.bing.com/th/id/OIP.GvntOdvz80txbfbW4rz2kAHaEo?w=1920&h=1200&rs=1&pid=ImgDetMain" alt="" width="32" /></div>
-                <div className="name text-sm text-gray-300">photo_10.12.2024</div>
-              </div>
-              <div className="icon"><img src="./download.png" alt="" width="16" /></div>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="SharedFiles px-4 py-2">
