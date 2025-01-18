@@ -262,7 +262,6 @@ const chat = () => {
                 <EmojiPicker onEmojiClick={setEmoji} />
               </div>
             )}
-            <img src="./camera.png" alt="" className='sm:w-[24px] w-[16px]' />
             <div className=" w-[16px] h-[16px] sm:w-[24px] sm:h-[24px] flex-shrink-0">
               <label htmlFor="imgupload">
                 <img src="./img.png" alt="" className=" w-[16px] sm:w-[24px] h-auto" />

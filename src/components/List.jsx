@@ -3,7 +3,7 @@ import User from './User'
 import ChatList from './ChatList'
 const list = () => {
   return (
-    <div >
+    <div className=' border border-transparent md:border-r-[#b9b7b71d]'>
       <User  />
       <ChatList/>
     </div>

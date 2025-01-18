@@ -6,12 +6,15 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import { account,chat,storage } from '../lib/appwrite';
 import useUserStore from '../lib/useStore';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 const login = () => {
   const [isLogin, setisLogin] = useState(false)
   const [isLoad,setisLoad]=useState(false);
+  const [img,setimg]=useState(null)
   // const [isLoading,setisLoading]=useState(false);
   const { isLoading, currentUser, fetchUserInfo }=useUserStore();
 
+  
   const handleSignup = async (e) => {
     e.preventDefault();
     setisLoad(true);
@@ -25,7 +28,9 @@ const login = () => {
       await account.createEmailPasswordSession(email, password)
       // Create a session to log the user in
       let avatarID=null;
+
       if(avatarFile && avatarFile.name){
+        // console.log(avatarFile)
         const file=avatarFile
         const response = await storage.createFile(import.meta.env.VITE_BUCKET_AVATARS_ID,'unique()',file);
         avatarID=response.$id;
@@ -57,7 +62,7 @@ const login = () => {
           chats:[]
         }
       );
-
+      setimg(null)
       // Show success message
       toast.success("Account created successfully!");
     } catch (err) {
@@ -112,15 +117,12 @@ const login = () => {
         theme="light"/>
      
       <div className="container md:w-[80%] mx-auto ">
-        <div className="nav flex justify-between  my-4">
+        <div className="nav flex justify-between  my-4 mx-4 sm:mx-0">
           <div className="logo"><span>&lt;</span><span>Chat</span><span>/&gt;</span></div>
           <div className="links ">
-            <ul className='flex gap-5' >
+            <ul className='flex gap-5  ' >
               <li className='cursor-pointer' onClick={()=>{setisLogin(true)}}>Login</li>
               <li className='cursor-pointer' onClick={()=>{setisLogin(false)}}>Signup</li>
-              <li className='cursor-pointer'>About Us</li>
-              <li className='cursor-pointer'>Contact</li>
-              <li className='cursor-pointer'>Help</li>
             </ul>
           </div>
         </div>
@@ -128,8 +130,14 @@ const login = () => {
           <div className='mx-auto sm:w-[60%] md:w-[30%]'>
             
             {
-              isLogin ? <>
-              <div >Signup for continue chatting with friends/family</div>
+              !isLogin ? <>
+                {/* <DotLottieReact
+                  src="https://lottie.host/8fa9989f-74cb-43c6-9882-25ce5554adc3/HcKsqbdZsv.json"
+                  loop
+                  autoplay
+                  className=' m-auto w-[50vw]  h-[90vh] absolute top-0 '
+                /> */}
+              <div >Signup to start chatting with friends/family</div>
                   <form action="" className=' flex flex-col gap-4 my-2' onSubmit={handleSignup}>
                     <div className="username w-[100%] flex bg-white p-2">
                       <img src="./user.svg" className=' w-4' alt="" />
@@ -144,15 +152,23 @@ const login = () => {
                       <img src="./lock.svg" className=' w-4' alt="" />
                       <input type="password" placeholder="Enter Password" name="password" className='text-black w-[100%] outline-none' />
                     </div>
-                    <div className="username w-[100%] flex bg-white p-2 text-black">
+                    <div className="username w-[100%] flex gap-1 bg-white p-2 text-black">
                       {/* <img src="./user.svg" className=' w-4' alt="" /> */}
-                      <label htmlFor="avatar">Upload Image</label>
-                      <input type='file' name="avatar" id="avatar" accept="image/*" className='text-black  outline-none' />
+                    <label htmlFor="avatar">
+                      {img ? (
+                        <div className='flex'>
+                          Avatar Uploaded <img src="./tick.png" alt="Uploaded" width={24} />
+                        </div>
+                      ) : (
+                        'Upload Avatar'
+                      )}
+                    </label>
+                      <input type='file' name="avatar" id="avatar" accept="image/*" onChange={(e)=>{setimg(e.target.files[0]?.name)}} className='text-black  outline-none hidden ' />
+                      <div> {img}</div>
                     </div>
                     <button className='bg-blue-500 p-2 disabled:bg-blue-300 disabled:cursor-not-allowed' disabled={isLoad}>{isLoad ? "Signing Up.." : 'Signup'}</button>
                   </form>
-                  <div className='text-center'>Have an account <span onClick={toggleLogin}>Login</span> </div></>
-
+                <div className='text-center' onClick={toggleLogin}>Have an account <span  >Login</span> </div></>
                :
                 <>
                   <div >Login for continue chatting with friends/family</div>
@@ -167,23 +183,13 @@ const login = () => {
                     </div>
                     <button className='bg-blue-500 p-2 disabled:bg-blue-300 disabled:cursor-not-allowed' disabled={isLoading}>{isLoading ? "Loading.." : 'Login'}</button>
                   </form>
-                  <div className='text-center'>Don&apos;t have an account <span onClick={toggleLogin}>Signup</span> </div></>
-                  
-
+                  <div className='text-center' onClick={toggleLogin}>Don&apos;t have an account <span >Signup</span> </div></>
             }
           </div>
-
         </div>
         <div className="footer flex flex-col md:flex-row justify-between">
-          <div className="links">
-            <ul className='flex gap-5 justify-center'>
-              <li className='cursor-pointer'>About Us</li>
-              <li className='cursor-pointer'>Terms of Use</li>
-              <li className='cursor-pointer'>Privacy Policy</li>
-            </ul>
-          </div>
-          <div className='text-center'>
-            <span>&copy;</span> 2024 <span>&lt;</span><span>Chat</span><span>/&gt;  </span>  All rights reserved | Design & Developed by Shivam
+          <div className='text-center text-sm sm:text-[18px]'>
+            <span>&copy;</span> 2024 <span>&lt;</span><span>Chat</span><span>/&gt; All rights reserved | Design & Developed by Shivam </span>  
           </div>
         </div>
       </div>

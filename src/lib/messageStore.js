@@ -2,7 +2,6 @@ import { create } from "zustand";// Adjust import path
 import { chat } from "./appwrite";
 import chatStore from "./chatStore";
 
-const {receiverUser,}
 const chatStore = create((set) => ({
     // Initial state
     isRecieverBlocked:false,

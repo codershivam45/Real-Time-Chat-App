@@ -13,9 +13,8 @@ const User = () => {
         <div className=' text-lg cursor-pointer'>{currentUser.username}</div>
       </div>
       <div className='flex gap-2 items-center '>
-        <div><img src="./more.png" alt=""  width="20" className='cursor-pointer'/></div>
-        <div><img src="./video.png" alt="" width="20" className='cursor-pointer' /></div>
         <div><img src="./edit.png" alt="" width="20" className='cursor-pointer' /></div>
+        <div><img src="./more.png" alt=""  width="20" className='cursor-pointer'/></div>
       </div>
     </div>
   )

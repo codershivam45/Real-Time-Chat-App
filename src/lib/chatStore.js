@@ -57,7 +57,7 @@ const chatStore = create((set) => ({
         set({ showDetails: val });
     },
     toggleBlock : (receiverUser,userid,receiverid)=>{
-        console.log("Clicked")
+        // console.log("Clicked")
         try{
             const ids = [
                 {
@@ -84,7 +84,7 @@ const chatStore = create((set) => ({
                     }
                     return JSON.stringify(element);
                 })
-                console.log(chatList)
+                // console.log(chatList)
                 await db["ChatUser"].update(item.senderId, { chats: chatList })
             })
             receiverUser.isReceiverBlocked = !receiverUser.isReceiverBlocked;
