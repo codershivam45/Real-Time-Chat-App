@@ -16,7 +16,8 @@ function App() {
   const { currentUser, isLoading, fetchUserInfo } = useUserStore();
   const { receiverUser, setReceiverNull, showDetails, toggleDetails } = chatStore();
   useEffect(() => {
-
+    // localStorage.clear();
+    // window.location.reload(); 
     fetchUserInfo();
 
   }, [fetchUserInfo])

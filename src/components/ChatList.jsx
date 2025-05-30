@@ -55,7 +55,8 @@ const ChatList = () => {
             // After all async calls have completed, update the state
             setchats(chatvar);
             setfilterChats(chatvar)
-            // console.log(chatvar);
+
+            console.log(chatvar);
         };
 
         fetchDetails();

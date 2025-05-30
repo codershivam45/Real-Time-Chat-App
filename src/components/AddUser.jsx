@@ -21,6 +21,7 @@ const AddUser = () => {
       setusers(() => {
         return res.documents;
       })
+      // console.log(users);
     } catch (error) {
       console.log(error.message)
 

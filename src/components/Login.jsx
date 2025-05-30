@@ -29,16 +29,16 @@ const login = () => {
       // Create a session to log the user in
       let avatarID=null;
 
-      if(avatarFile && avatarFile.name){
+      if (avatarFile && avatarFile.name) {
         // console.log(avatarFile)
-        const file=avatarFile
-        const response = await storage.createFile(import.meta.env.VITE_BUCKET_AVATARS_ID,'unique()',file);
-        avatarID=response.$id;
-        const imageUrl = storage.getFilePreview(
+        const file = avatarFile
+        const response = await storage.createFile(import.meta.env.VITE_BUCKET_AVATARS_ID, 'unique()', file);
+        avatarID = response.$id;
+        const imageUrl = storage.getFileView(
           import.meta.env.VITE_BUCKET_AVATARS_ID, // Your storage bucket ID
-        avatarID  ,    // File ID
+          avatarID,    // File ID
         );
-        avatarID=imageUrl
+        avatarID = imageUrl
       }
 
       // Add user details to the database

@@ -13,25 +13,48 @@ const useUserStore = create((set) => ({
         set({ isLoading: true }); // Start loading
 
         try {
-            const user = await account.get();
-            // console.log(user); // Fetch user info from Appwrite
-            const userInfo =await chat.getDocument(
+            const user = await account.get(); // Get authenticated user
+
+            const userInfo = await chat.getDocument(
                 import.meta.env.VITE_DB_ID,
                 import.meta.env.VITE_USERS_ID,
                 user.$id
-            )
-            const chats =await chat.getDocument(
+            );
+
+            const chats = await chat.getDocument(
                 import.meta.env.VITE_DB_ID,
                 import.meta.env.VITE_CHATUSER_ID,
                 user.$id
-            )
-            // console.log(userInfo,chats);
-            set({ currentUser: userInfo,chatList:chats, isLoading: false }); // Update store with user data
+            );
+
+            set({ currentUser: userInfo, chatList: chats, isLoading: false });
+
         } catch (err) {
             console.error("Failed to fetch user info:", err);
-            set({ currentUser: null, isLoading: false }); // In case of error, reset user data
+
+            // Check if the document is missing (Appwrite 404)
+            if (err.code === 404 || err.message.includes('Document with the requested ID')) {
+                console.warn("User document not found. Clearing session and storage.");
+
+                // Optional: Clear localStorage
+                localStorage.clear();
+
+                // Optional: Delete session to force logout
+                try {
+                    await account.deleteSession('current');
+                } catch (logoutErr) {
+                    console.error("Error during session deletion:", logoutErr);
+                }
+
+                // Reload app to force login or onboarding
+                window.location.reload();
+            } else {
+                // For other errors
+                set({ currentUser: null, isLoading: false });
+            }
         }
     },
+    
     fetchChatList: async (id)=>{
         const chats = await chat.getDocument(
             import.meta.env.VITE_DB_ID,

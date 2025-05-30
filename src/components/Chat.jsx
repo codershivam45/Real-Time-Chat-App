@@ -111,7 +111,7 @@ const chat = () => {
         'unique()',
         file
       )
-      const imageUrl = storage.getFilePreview(
+      const imageUrl = storage.getFileView(
         import.meta.env.VITE_BUCKET_AVATARS_ID, // Your storage bucket ID
         res.$id,    // File ID
       );
