@@ -56,7 +56,7 @@ const ChatList = () => {
             setchats(chatvar);
             setfilterChats(chatvar)
 
-            console.log(chatvar);
+            // console.log(chatvar);
         };
 
         fetchDetails();

@@ -3,7 +3,7 @@ import useUserStore from '../lib/useStore'
 const User = () => {
   const {currentUser}=useUserStore();
 
-  console.log(currentUser.avatar);
+  // console.log(currentUser.avatar);
   return (
     <div className='flex p-4 justify-between items-center text-white bg-[#110f0f49] sticky top-0 z-10 opacity-100 backdrop-blur-3xl'>
       <div className='flex  items-center gap-2'>
