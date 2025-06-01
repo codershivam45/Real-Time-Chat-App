@@ -18,7 +18,7 @@ const chat = () => {
 
   const scrollRef = useRef(null)
   const observerRef = useRef(null)
-  const { currentUser, chatList, fetchChatList } = useUserStore()
+  const { currentUser, fetchChatList } = useUserStore()
   const { receiverUser, messageID, message, fetchMessage, toggleDetails } = chatStore();
 
 
@@ -59,19 +59,13 @@ const chat = () => {
     if (!messageID) return;
 
     const channel = `databases.${import.meta.env.VITE_DB_ID}.collections.${import.meta.env.VITE_MESSAGE_ID}.documents.${messageID}`;
-    // console.log("Subscribing to:", channel);
 
-    const unsubscribe = client.subscribe(channel, (response) => {
-      // console.log("Realtime update received:", response);
-
-      // Call the fetchMessage function to update the messages
+    const unsubscribe = client.subscribe(channel, () => {
       fetchMessage(messageID);
-
     });
 
     return () => {
-      // console.log("Unsubscribing from:", channel);
-      unsubscribe(); // Cleanup to avoid memory leaks
+      unsubscribe();
     };
   }, [messageID, fetchMessage]);
 
@@ -101,8 +95,6 @@ const chat = () => {
   };
   const handleImage = async (e) => {
     e.preventDefault()
-    // console.log(e);
-    // console.log(e.target.files[0]);
     const file = e.target.files[0];
 
     if (file && file.name) {
@@ -112,13 +104,10 @@ const chat = () => {
         file
       )
       const imageUrl = storage.getFileView(
-        import.meta.env.VITE_BUCKET_AVATARS_ID, // Your storage bucket ID
-        res.$id,    // File ID
+        import.meta.env.VITE_BUCKET_AVATARS_ID,
+        res.$id,
       );
-      setimg((prev) => {
-        return imageUrl;
-      })
-
+      setimg(() => imageUrl);
     }
   }
   const handleSend = async () => {
@@ -163,12 +152,12 @@ const chat = () => {
           let element = JSON.parse(it)
 
           if (element.userId == item.receiverId) {
-            
+
             element.lastMessage = msg;
-            if(img){
-              element.lastMessage = "📷 "+msg;
+            if (img) {
+              element.lastMessage = "📷 " + msg;
             }
-            if(!msg && img){
+            if (!msg && img) {
               element.lastMessage = " 📷 You shared an image "
             }
             element.lastUpdated = Date.now()
@@ -198,104 +187,95 @@ const chat = () => {
   }
 
   return (
-    <div className='flex flex-col justify-between h-[100vh]'>
+    <div className='flex flex-col justify-between h-[100vh] bg-gradient-to-b from-[#0f0f0f] to-[#1a1a1a]'>
 
-      <div className='user flex p-4 justify-between items-center text-white bg-[#110f0f49] sticky top-0  opacity-100 backdrop-blur-3xl'>
-        <div className='flex  items-center gap-3 lg:ml-0 ml-[25px] ' onClick={() => { toggleDetails(true) }}>
-          <div className="dp  ">
-            <img src={receiverUser.avatar && !receiverUser.isSenderBlocked ? receiverUser.avatar : "./avatar.png"} alt="" className='rounded-[50%]  w-[48px] h-[48px]' />
+      <div className='user flex p-4 justify-between items-center text-white bg-[#1a1a1a]/80 sticky top-0 backdrop-blur-xl border-b border-gray-800/50'>
+        <div className='flex items-center gap-4 lg:ml-0 ml-[25px] hover:bg-[#2a2a2a] p-2 rounded-lg transition-all duration-200' onClick={() => { toggleDetails(true) }}>
+          <div className="dp relative">
+            <img src={receiverUser.avatar && !receiverUser.isReceiverBlocked ? receiverUser.avatar : "./avatar.png"} alt="" className='rounded-[50%] w-[48px] h-[48px] object-cover border-2 border-gray-700 shadow-lg' />
+
           </div>
-          <div className=' text-lg cursor-pointer '>
-            <div className="name">{receiverUser?.username && !receiverUser.isSenderBlocked ? receiverUser.username : "User"}</div>
-            {!receiverUser.isSenderBlocked && <div className="desc text-sm text-gray-500">Available</div>}
+          <div className='text-lg'>
+            <div className="name font-semibold">{receiverUser?.username && !receiverUser.isReceiverBlocked ? receiverUser.username : "User"}</div>
+            {!receiverUser.isReceiverBlocked && <div className="desc text-sm text-gray-400">Available</div>}
           </div>
-
         </div>
-        <div className='flex gap-2 items-center '>
-          <div><img src="./phone.png" alt="" width="20" className='cursor-pointer' /></div>
-          <div><img src="./video.png" alt="" width="20" className='cursor-pointer' /></div>
-          <div><img src="./info.png" alt="" width="20" className='cursor-pointer' /></div>
+        <div className='flex gap-2 items-center'>
+          {/* Action buttons can be uncommented and styled similarly when needed */}
         </div>
-
       </div>
-      <div className="chats flex flex-col gap-2 h-[80vh] overflow-y-auto no-scrollbar bg-[url('/chatbg.jpeg')] " ref={scrollRef}>
+
+      <div className="chats flex flex-col gap-4 p-4 h-[80vh] overflow-y-auto no-scrollbar bg-[url('/chatbg.jpeg')] bg-opacity-30" ref={scrollRef}>
         {
           message.map((item, index) => (
             <div className={item.senderId == currentUser.id ? "flex flex-col items-end" : 'flex flex-col items-start'} key={index}>
-              <div className="chat text-white p-2 flex gap-2 max-w-[80%]">
+              <div className="chat text-white p-2 flex gap-3 max-w-[80%]">
                 {item.senderId != currentUser.id && <div>
-                  <div className="w-[28px] h-[28px] rounded-[50%] overflow-clip">
-                    <img src={receiverUser.avatar && !receiverUser.isSenderBlocked ? receiverUser.avatar : "./avatar.png"} alt="Avatar" className="w-[28px] h-[28px] " />
+                  <div className="w-[32px] h-[32px] rounded-[50%] overflow-clip border-2 border-gray-700 shadow-lg">
+                    <img src={receiverUser.avatar && !receiverUser.isReceiverBlocked ? receiverUser.avatar : "./avatar.png"} alt="Avatar" className="w-[32px] h-[32px] object-cover" />
                   </div>
                 </div>}
-                <div className={item.senderId == currentUser.id ? "text flex flex-col gap-1 items-end mr-2" : "text flex flex-col gap-1 items-start" }>
-                  {item.photo && <div className="img">
+                <div className={item.senderId == currentUser.id ? "text flex flex-col gap-2 items-end mr-2" : "text flex flex-col gap-2 items-start"}>
+                  {item.photo && <div className="img rounded-lg overflow-hidden shadow-lg">
                     <img
                       src={item.photo}
                       alt="Chat Image"
-                      className="rounded-md"
+                      className="max-w-[300px] rounded-lg hover:scale-105 transition-transform duration-200"
                     />
                   </div>}
-                  {item.msg && <div className={item.senderId == currentUser.id ? "msg  bg-blue-500 p-2 rounded-md max-w-fit " : "msg bg-[rgba(166,169,174,0.78)] p-2 rounded-md max-w-fit"}>
+                  {item.msg && <div className={item.senderId == currentUser.id ?
+                    "msg bg-blue-600 p-3 rounded-2xl rounded-tr-none shadow-lg hover:shadow-blue-500/20 transition-shadow" :
+                    "msg bg-[#2a2a2a] p-3 rounded-2xl rounded-tl-none shadow-lg hover:shadow-gray-500/20 transition-shadow"}>
                     {item.msg}
                   </div>}
-                  <div className="time text-sm">{handleTime(item.timeElapsed)}</div>
+                  <div className="time text-xs text-gray-400">{handleTime(item.timeElapsed)}</div>
                 </div>
               </div>
             </div>
           ))
         }
-        {receiverUser.isReceiverBlocked && <div className='text-white text-center w-fit mx-auto bg-[#ffffff1a] rounded-sm m-1 p-1 text-sm '>You blocked the User </div>}
-
+        {receiverUser.isSenderBlocked && <div className='text-white text-center w-fit mx-auto bg-[#ffffff1a] rounded-lg m-2 p-2 text-sm backdrop-blur-sm border border-gray-700/50'>You blocked the User</div>}
       </div>
 
-      <div className="send  md:p-4 flex items-center justify-between relative">
-        <div className="flex bg-[#4A4A58] border border-transparent hover:border-white items-center py-2 sm:py-4 px-2 rounded w-full justify-between">
-          
-          <div className="icons flex gap-2 flex-shrink-0">
-            <img src="./emoji.png" alt="" className='sm:w-[24px] w-[16px] cursor-pointer' onClick={() => { setopen((prev) => !prev); }} />
+      <div className="send p-4 flex items-center justify-between relative bg-[#1a1a1a]/80 backdrop-blur-xl border-t border-gray-800/50">
+        <div className="flex bg-[#2a2a2a] border border-gray-700/50 hover:border-gray-600 items-center py-3 px-4 rounded-full w-full justify-between transition-all duration-200 shadow-lg">
+          <div className="icons flex gap-4 flex-shrink-0">
+            <img src="./emoji.png" alt="" className='w-[24px] cursor-pointer hover:opacity-80 transition-opacity hover:scale-110' onClick={() => { setopen((prev) => !prev); }} />
             {open && (
               <div
-                className="fixed bottom-24 left-40 p-4 rounded shadow-lg z-50"
-                style={{ width: "300px" }} // Adjust width as needed
+                className="fixed bottom-24 left-40 p-4 rounded-xl shadow-2xl bg-[#2a2a2a] border border-gray-700/50 backdrop-blur-xl"
+                style={{ width: "300px" }}
               >
                 <EmojiPicker onEmojiClick={setEmoji} />
               </div>
             )}
-            <div className=" w-[16px] h-[16px] sm:w-[24px] sm:h-[24px] flex-shrink-0">
-              <label htmlFor="imgupload">
-                <img src="./img.png" alt="" className=" w-[16px] sm:w-[24px] h-auto" />
+            <div className="w-[24px] h-[24px] flex-shrink-0">
+              <label htmlFor="imgupload" className="cursor-pointer hover:opacity-80 transition-opacity hover:scale-110">
+                <img src="./img.png" alt="" className="w-[24px] h-auto" />
               </label>
             </div>
             <input type="file" name="" id="imgupload" className="hidden" accept="image/*" onChange={handleImage} />
           </div>
 
-          
           <input
             type="text"
-            className="bg-[#4A4A58] text-white focus:outline-none ml-2 flex-grow"
-            placeholder={receiverUser.isSenderBlocked || receiverUser.isReceiverBlocked ? "Can't send a message" : "Message"}
+            className="bg-transparent text-white focus:outline-none ml-2 flex-grow placeholder-gray-500"
+            placeholder={receiverUser.isSenderBlocked || receiverUser.isReceiverBlocked ? "Can't send a message" : "Type a message..."}
             value={msg}
             onChange={handleChange}
           />
 
-          <div className="flex gap-2 flex-shrink-0">
-            <button>
-              <img src="./mic.png" alt="" className='sm:w-[24px] w-[16px]' />
-            </button>
+          <div className="flex gap-4 flex-shrink-0">
             <button
               onClick={handleSend}
               disabled={(!img && !msg) || receiverUser.isSenderBlocked || receiverUser.isReceiverBlocked}
-              className="disabled:cursor-not-allowed"
+              className="disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-80 transition-opacity hover:scale-110"
             >
-              <img src="./send.png" alt="" className='sm:w-[24px] w-[16px]' />
+              <img src="./send.png" alt="" className='w-[24px]' />
             </button>
           </div>
         </div>
       </div>
-
-
-
     </div>
   )
 }

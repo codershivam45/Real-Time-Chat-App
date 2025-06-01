@@ -82,12 +82,13 @@ const chatStore = create((set) => ({
                             element.isSenderBlocked=!(element.isSenderBlocked);
                         }
                     }
+                    console.log(element)
                     return JSON.stringify(element);
                 })
                 // console.log(chatList)
                 await db["ChatUser"].update(item.senderId, { chats: chatList })
             })
-            receiverUser.isReceiverBlocked = !receiverUser.isReceiverBlocked;
+            receiverUser.isSenderBlocked = !receiverUser.isSenderBlocked;
             set({ receiverUser: receiverUser })
         }catch{
             console.log("Error")
